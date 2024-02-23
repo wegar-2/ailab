@@ -7,16 +7,13 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from neuralforecast import NeuralForecast
 from neuralforecast.models import NBEATSx
-from neuralforecast.losses.pytorch import MQLoss, DistributionLoss
-from neuralforecast.tsdataset import TimeSeriesDataset
-from neuralforecast.utils import (AirPassengers, AirPassengersPanel,
-                                  AirPassengersStatic)
+from neuralforecast.losses.pytorch import DistributionLoss
+from neuralforecast.utils import AirPassengersPanel, AirPassengersStatic
 
 
 def get_data() -> tuple[pd.DataFrame, pd.DataFrame]:
     y_train = AirPassengersPanel[
-        AirPassengersPanel.ds < AirPassengersPanel['ds'].values[-12]
-    ]
+        AirPassengersPanel.ds < AirPassengersPanel['ds'].values[-12]]
     y_test = AirPassengersPanel[
         AirPassengersPanel.ds >= AirPassengersPanel['ds'].values[-12]
     ].reset_index(drop=True)
@@ -30,7 +27,6 @@ if __name__ == "__main__":
     model = NBEATSx(
         h=12,
         input_size=24,
-        #loss=MQLoss(level=[80, 90]),
         loss=DistributionLoss(distribution='Normal', level=[80, 90]),
         scaler_type='robust',
         dropout_prob_theta=0.5,
